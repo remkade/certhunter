@@ -9,7 +9,6 @@ import (
 	"flag"
 	"fmt"
 	"os"
-//	"time"
 )
 
 var host string
@@ -23,7 +22,7 @@ func init() {
 	flag.StringVar(&host, "host", "localhost", "Hostname to connect to")
 	flag.IntVar(&port, "port", 443, "Port to connect to")
 	flag.BoolVar(&skipVerifyHostname, "skip-host-verify", false, "Skip verifying the certificate hostname")
-	flag.BoolVar(&verbose, "verbose", false, "Print out summary of cert")
+	flag.BoolVar(&verbose, "verbose", false, "Print out summary of certs, including expiration dates")
 	flag.Parse()
 	tlsConfig = new(tls.Config)
 	tlsConfig.InsecureSkipVerify = skipVerifyHostname
@@ -33,6 +32,7 @@ func main() {
 	// Get Cert from remote server
 	conn, err := tls.Dial("tcp", fmt.Sprintf("%s:%d", host, port), tlsConfig)
 
+	// Failed
 	if err != nil {
 		fmt.Printf("Error connecting to host: %s, %s\n", host, err.Error())
 		os.Exit(1)
@@ -89,10 +89,3 @@ func main() {
 		fmt.Printf("Certificate is: %s\n", statusMapping[ocspResponse.Status])
 	}
 }
-
-/*
-func isValidNow(notBefore time.Time, notAfter time.Time) bool {
-	now := time.Now()
-	return now.Before(notAfter) && now.After(notBefore)
-}
-*/
